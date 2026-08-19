@@ -1,0 +1,191 @@
+// Prisma schema — viziontech portafolio
+// docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum Role {
+  ADMIN
+}
+
+enum ProjectStatus {
+  EN_DESARROLLO
+  COMPLETADO
+  MANTENIMIENTO
+  DEMO
+  ARCHIVADO
+}
+
+enum LinkType {
+  DEMO
+  SISTEMA
+  LANDING_PAGE
+  REPOSITORIO
+  DOCUMENTACION
+  OTRO
+}
+
+model User {
+  id           String   @id @default(cuid())
+  name         String
+  email        String   @unique
+  passwordHash String
+  role         Role     @default(ADMIN)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@map("users")
+}
+
+model Category {
+  id          String   @id @default(cuid())
+  name        String
+  slug        String   @unique
+  description String?
+  order       Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  projects Project[]
+
+  @@map("categories")
+}
+
+model Technology {
+  id        String   @id @default(cuid())
+  name      String
+  slug      String   @unique
+  icon      String? // nombre del icono (lucide-react) o URL
+  color     String? // color hex opcional para el badge
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  projects ProjectTechnology[]
+
+  @@map("technologies")
+}
+
+model Project {
+  id               String        @id @default(cuid())
+  name             String
+  slug             String        @unique
+  shortDescription String
+  description      String
+  problem          String? // problema que resuelve
+  features         String[]      @default([]) // características principales
+  client           String?
+  categoryId       String?
+  category         Category?     @relation(fields: [categoryId], references: [id])
+  mainImage        String?
+  status           ProjectStatus @default(EN_DESARROLLO)
+  published        Boolean       @default(false)
+  featured         Boolean       @default(false)
+  order            Int           @default(0)
+  developmentDate  DateTime?
+
+  // SEO
+  metaTitle       String?
+  metaDescription String?
+  metaKeywords    String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  images       ProjectImage[]
+  links        ProjectLink[]
+  technologies ProjectTechnology[]
+  views        ProjectView[]
+
+  @@index([published, featured])
+  @@index([categoryId])
+  @@map("projects")
+}
+
+model ProjectImage {
+  id        String   @id @default(cuid())
+  projectId String
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  url       String
+  alt       String?
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+
+  @@map("project_images")
+}
+
+model ProjectLink {
+  id        String   @id @default(cuid())
+  projectId String
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  name      String
+  url       String
+  type      LinkType @default(OTRO)
+  createdAt DateTime @default(now())
+
+  @@map("project_links")
+}
+
+model ProjectTechnology {
+  projectId    String
+  technologyId String
+  project      Project    @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  technology   Technology @relation(fields: [technologyId], references: [id], onDelete: Cascade)
+
+  @@id([projectId, technologyId])
+  @@map("project_technologies")
+}
+
+model ProjectView {
+  id        String   @id @default(cuid())
+  projectId String
+  project   Project  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  ipHash    String // hash SHA-256 de la IP, nunca la IP en claro
+  userAgent String?
+  createdAt DateTime @default(now())
+
+  @@index([projectId])
+  @@map("project_views")
+}
+
+model Message {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  phone     String?
+  company   String?
+  subject   String?
+  message   String
+  read      Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@map("messages")
+}
+
+model Settings {
+  id          String @id @default("settings")
+  companyName String @default("viziontech")
+  logo        String?
+  description String?
+  email       String?
+  phone       String?
+  whatsapp    String?
+  address     String?
+  schedule    String?
+
+  facebook  String?
+  instagram String?
+  tiktok    String?
+  linkedin  String?
+  github    String?
+
+  updatedAt DateTime @updatedAt
+
+  @@map("settings")
+}

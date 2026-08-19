@@ -1,26 +1,70 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:where(.dark, .dark *));
+
 :root {
   --background: #ffffff;
-  --foreground: #171717;
+  --foreground: #1a1a1b;
+  --surface: #ffffff;
+  --surface-muted: #f4f5f7;
+  --border: #e5e7eb;
+  --muted-foreground: #6b7280;
+}
+
+.dark {
+  --background: #0c0c0d;
+  --foreground: #f4f4f5;
+  --surface: #19191b;
+  --surface-muted: #232326;
+  --border: #2c2c30;
+  --muted-foreground: #9a9aa2;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-surface: var(--surface);
+  --color-surface-muted: var(--surface-muted);
+  --color-border: var(--border);
+  --color-muted-foreground: var(--muted-foreground);
+
+  /* Paleta viziontech */
+  --color-brand-electric: #00aeef;
+  --color-brand-electric-dark: #0090c7;
+  --color-brand-cobalt: #1c4e80;
+  --color-brand-silver: #c0c0c0;
+  --color-brand-carbon: #1a1a1b;
+
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+* {
+  border-color: var(--color-border);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-background);
+  color: var(--color-foreground);
+  font-family: var(--font-sans), Arial, Helvetica, sans-serif;
+}
+
+::selection {
+  background: var(--color-brand-electric);
+  color: white;
+}
+
+.brand-gradient {
+  background-image: linear-gradient(135deg, var(--color-brand-electric) 0%, var(--color-brand-cobalt) 100%);
+}
+
+.brand-gradient-text {
+  background-image: linear-gradient(135deg, var(--color-brand-electric) 0%, var(--color-brand-cobalt) 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+.scrollbar-thin {
+  scrollbar-width: thin;
 }

@@ -32,9 +32,21 @@ yarn-error.log*
 
 # env files (can opt-in for committing if needed)
 .env*
+!.env.example
+
+# storage local de imágenes subidas (fuera del árbol versionado)
+/storage/uploads/*
+!/storage/uploads/.gitkeep
 
 # vercel
 .vercel
+
+# docs de skills para agentes IA instaladas automáticamente por `prisma init`
+# (no son código de la app; se regeneran solas si hacen falta)
+/.agents/
+/.claude/skills/
+/.windsurf/skills/
+skills-lock.json
 
 # typescript
 *.tsbuildinfo
