@@ -4,6 +4,12 @@
  * (config liviana, para no cargar el cliente de Prisma en el runtime del middleware).
  */
 export const authConfig = {
+  // Necesario fuera de Vercel: Auth.js v5 solo confía automáticamente en el
+  // host de la petición cuando detecta que corre en Vercel. En un VPS (o
+  // cualquier otro hosting) sin esto, rechaza la petición y termina en
+  // /api/auth/error con un genérico "Configuration" — no es un error real
+  // de configuración, es este flag.
+  trustHost: true,
   pages: {
     signIn: "/admin/login",
   },
