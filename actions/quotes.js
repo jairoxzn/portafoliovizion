@@ -7,6 +7,7 @@ import { quoteSchema } from "@/schemas/quote";
 import { calculateQuoteTotals } from "@/lib/quotes";
 import { saveFile, deleteFile, ALLOWED_DOCUMENT_TYPES } from "@/lib/storage";
 import { getSettings } from "@/actions/settings";
+import { getSiteUrl } from "@/lib/seo";
 
 const QUOTE_INCLUDE = { client: true, items: { orderBy: { order: "asc" } } };
 
@@ -149,7 +150,9 @@ export async function generateQuotePdf(id) {
       getSettings(),
     ]);
 
-    const buffer = await renderToBuffer(QuotePdfDocument({ quote, settings }));
+    const logo = await fetchLogoForPdf(settings.logo);
+
+    const buffer = await renderToBuffer(QuotePdfDocument({ quote, settings, logo }));
 
     if (quote.pdfUrl) await deleteFile(quote.pdfUrl);
 
@@ -163,7 +166,7 @@ export async function generateQuotePdf(id) {
     return { success: true, data: { url: saved.url } };
   } catch (error) {
     console.error("Error generando PDF de cotización:", error);
-    return { success: false, error: "No se pudo generar el PDF." };
+    return { success: false, error: error.message || "No se pudo generar el PDF." };
   }
 }
 
@@ -202,6 +205,33 @@ export async function getQuoteStats() {
     acceptedByCurrency,
     conversionRate,
   };
+}
+
+const LOGO_FORMAT_BY_EXT = { jpg: "jpg", jpeg: "jpg", png: "png" };
+
+/**
+ * Descarga el logo configurado en Settings para incrustarlo en el PDF.
+ * @react-pdf/renderer solo embebe JPG/PNG de forma confiable, y necesita los
+ * bytes ya resueltos (una URL relativa no sirve del lado del servidor). Si
+ * algo falla, simplemente no se muestra el logo — nunca rompe el PDF entero.
+ */
+async function fetchLogoForPdf(logoUrl) {
+  if (!logoUrl) return null;
+
+  const ext = logoUrl.split(".").pop()?.toLowerCase().split("?")[0];
+  const format = LOGO_FORMAT_BY_EXT[ext];
+  if (!format) return null; // webp/gif: no soportado de forma confiable por el motor de PDF
+
+  try {
+    const absoluteUrl = logoUrl.startsWith("http") ? logoUrl : `${getSiteUrl()}${logoUrl}`;
+    const response = await fetch(absoluteUrl);
+    if (!response.ok) return null;
+    const arrayBuffer = await response.arrayBuffer();
+    return { data: Buffer.from(arrayBuffer), format };
+  } catch (error) {
+    console.error("No se pudo descargar el logo para el PDF:", error);
+    return null;
+  }
 }
 
 function revalidateQuotes(id) {
