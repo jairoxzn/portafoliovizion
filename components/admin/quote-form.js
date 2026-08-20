@@ -85,6 +85,14 @@ export function QuoteForm({ quote, clients }) {
     router.refresh();
   }
 
+  function onInvalid() {
+    toast({
+      type: "error",
+      title: "Revisa el formulario",
+      description: "Hay campos incompletos o inválidos (marcados en rojo) antes de poder guardar.",
+    });
+  }
+
   function handleClientCreated(newClient) {
     setClientList((prev) => [...prev, newClient].sort((a, b) => a.name.localeCompare(b.name)));
     setValue("clientId", newClient.id, { shouldValidate: true });
@@ -92,7 +100,7 @@ export function QuoteForm({ quote, clients }) {
   }
 
   return (
-    <form onSubmit={handleSubmit(onSubmit)} className="space-y-6 pb-10">
+    <form onSubmit={handleSubmit(onSubmit, onInvalid)} className="space-y-6 pb-10">
       <Card>
         <CardHeader>
           <h2 className="font-semibold">Cliente</h2>
@@ -160,7 +168,9 @@ export function QuoteForm({ quote, clients }) {
           <Controller
             name="items"
             control={control}
-            render={({ field }) => <QuoteItemsField value={field.value} onChange={field.onChange} currency={currency} />}
+            render={({ field }) => (
+              <QuoteItemsField value={field.value} onChange={field.onChange} currency={currency} errors={errors.items} />
+            )}
           />
           <FieldError>{errors.items?.message}</FieldError>
 
