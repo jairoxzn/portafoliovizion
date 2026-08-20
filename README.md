@@ -53,10 +53,18 @@ storage/uploads/        # archivos subidos (fuera del árbol de código, gitigno
 
 ## Almacenamiento de imágenes
 
-Las imágenes subidas desde el panel se guardan en `storage/uploads/` (fuera de `public/`,
-excluido de git) y se sirven vía `app/api/uploads/[...path]`. La lógica vive detrás de una
-interfaz (`lib/storage.js`) pensada para poder migrar a S3/Cloudinary/Vercel Blob más adelante
-sin tocar el resto de la app.
+`lib/storage.js` soporta dos backends, elegidos automáticamente:
+
+- **Local (desarrollo)**: sin `BLOB_READ_WRITE_TOKEN` en el entorno, guarda en
+  `storage/uploads/` (fuera de `public/`, excluido de git) y se sirve vía
+  `app/api/uploads/[...path]`.
+- **Vercel Blob (producción en Vercel)**: si existe `BLOB_READ_WRITE_TOKEN` (Vercel lo agrega
+  solo al conectar un Blob Store al proyecto: *Storage → Create → Blob*), sube ahí y usa la URL
+  pública del CDN directamente. Necesario porque el filesystem de las funciones de Vercel es
+  de solo lectura / efímero.
+
+El resto de la app solo conoce la URL devuelta por `saveFile()`, nunca el backend — migrar a
+S3/Cloudinary es reemplazar el cuerpo de esas funciones.
 
 ## Seguridad
 
