@@ -66,6 +66,16 @@ storage/uploads/        # archivos subidos (fuera del árbol de código, gitigno
 El resto de la app solo conoce la URL devuelta por `saveFile()`, nunca el backend — migrar a
 S3/Cloudinary es reemplazar el cuerpo de esas funciones.
 
+## Cotizaciones
+
+Módulo para armar presupuestos y compartirlos con clientes: `/admin/clientes` (CRUD de
+clientes) y `/admin/cotizaciones` (crear/editar cotización con ítems, descuento, impuesto y
+moneda configurable — USD/PEN/VES/ARS/BOB/CLP/COP/MXN). Desde el detalle de una cotización se
+genera un PDF profesional (`@react-pdf/renderer`, guardado con el mismo adaptador de storage que
+las imágenes) y se arma un mensaje de WhatsApp/email con el link al PDF listo para enviar. No
+incluye envío automático (WhatsApp/email no permiten adjuntar un archivo vía link) ni catálogo de
+servicios/firma digital — queda para una futura iteración si hace falta.
+
 ## Seguridad
 
 - `/admin/**` está protegido por `proxy.js` (Auth.js) y además cada Server Action/route handler

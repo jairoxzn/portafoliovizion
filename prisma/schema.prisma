@@ -31,6 +31,25 @@ enum LinkType {
   OTRO
 }
 
+enum Currency {
+  USD
+  PEN
+  VES
+  ARS
+  BOB
+  CLP
+  COP
+  MXN
+}
+
+enum QuoteStatus {
+  BORRADOR
+  ENVIADA
+  ACEPTADA
+  RECHAZADA
+  VENCIDA
+}
+
 model User {
   id           String   @id @default(cuid())
   name         String
@@ -166,6 +185,72 @@ model Message {
   createdAt DateTime @default(now())
 
   @@map("messages")
+}
+
+model Client {
+  id          String   @id @default(cuid())
+  name        String // razón social / nombre
+  taxId       String? // RUC/DNI
+  contactName String?
+  contactRole String?
+  phone       String?
+  whatsapp    String?
+  email       String?
+  address     String?
+  city        String?
+  notes       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  quotes Quote[]
+
+  @@map("clients")
+}
+
+model Quote {
+  id       String      @id @default(cuid())
+  number   String      @unique // COT-2026-0001
+  clientId String
+  client   Client      @relation(fields: [clientId], references: [id])
+  title    String
+  description String
+  status   QuoteStatus @default(BORRADOR)
+  currency Currency    @default(USD)
+  discount Float       @default(0) // descuento global, monto fijo
+  taxRate  Float       @default(0) // % (ej. IGV/IVA)
+
+  issueDate     DateTime  @default(now())
+  validUntil    DateTime?
+  scopeIncludes String[]  @default([])
+  scopeExcludes String[]  @default([])
+  paymentTerms  String?
+  notes         String?
+  pdfUrl        String?
+
+  sentAt      DateTime?
+  respondedAt DateTime?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  items QuoteItem[]
+
+  @@index([clientId])
+  @@index([status])
+  @@map("quotes")
+}
+
+model QuoteItem {
+  id          String  @id @default(cuid())
+  quoteId     String
+  quote       Quote   @relation(fields: [quoteId], references: [id], onDelete: Cascade)
+  description String
+  quantity    Float   @default(1)
+  unitPrice   Float
+  discount    Float   @default(0)
+  order       Int     @default(0)
+
+  @@map("quote_items")
 }
 
 model Settings {

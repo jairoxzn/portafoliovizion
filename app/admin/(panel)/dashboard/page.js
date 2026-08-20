@@ -1,16 +1,18 @@
 import Link from "next/link";
-import { FolderKanban, CheckCircle2, FileEdit, Tags, Cpu, Eye, ArrowUpRight } from "lucide-react";
+import { FolderKanban, CheckCircle2, FileEdit, Tags, Cpu, Eye, ArrowUpRight, FileText, TrendingUp } from "lucide-react";
 import { getDashboardStats } from "@/actions/projects";
+import { getQuoteStats } from "@/actions/quotes";
 import { StatCard } from "@/components/admin/stat-card";
 import { Card, CardHeader, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { EmptyState } from "@/components/ui/empty-state";
 import { formatDate, statusLabel, statusStyle } from "@/lib/utils";
+import { formatMoneyByCurrency } from "@/lib/quotes";
 
 export const metadata = { title: "Dashboard" };
 
 export default async function AdminDashboardPage() {
-  const stats = await getDashboardStats();
+  const [stats, quoteStats] = await Promise.all([getDashboardStats(), getQuoteStats()]);
 
   return (
     <div className="space-y-6">
@@ -26,6 +28,16 @@ export default async function AdminDashboardPage() {
         <StatCard icon={Tags} label="Categorías" value={stats.categories} accent="text-brand-cobalt" />
         <StatCard icon={Cpu} label="Tecnologías" value={stats.technologies} accent="text-violet-500" />
         <StatCard icon={Eye} label="Visitas totales" value={stats.totalViews} accent="text-sky-500" />
+      </div>
+
+      <div>
+        <h2 className="mb-3 text-sm font-semibold text-muted-foreground">Cotizaciones</h2>
+        <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+          <StatCard icon={FileText} label="Total" value={quoteStats.total} />
+          <StatCard icon={CheckCircle2} label="Aceptadas" value={quoteStats.accepted} accent="text-emerald-500" />
+          <StatCard icon={TrendingUp} label="Tasa de conversión" value={`${quoteStats.conversionRate}%`} accent="text-brand-cobalt" />
+          <StatCard icon={FileText} label="Valor cotizado" value={formatMoneyByCurrency(quoteStats.quotedByCurrency)} accent="text-violet-500" />
+        </div>
       </div>
 
       <div className="grid gap-6 lg:grid-cols-3">

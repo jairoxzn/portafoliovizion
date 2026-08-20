@@ -12,6 +12,8 @@ import {
   User,
   Globe,
   X,
+  Users,
+  FileText,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -20,6 +22,8 @@ const NAV_ITEMS = [
   { href: "/admin/proyectos", label: "Proyectos", icon: FolderKanban },
   { href: "/admin/categorias", label: "Categorías", icon: Tags },
   { href: "/admin/tecnologias", label: "Tecnologías", icon: Cpu },
+  { href: "/admin/cotizaciones", label: "Cotizaciones", icon: FileText },
+  { href: "/admin/clientes", label: "Clientes", icon: Users },
   { href: "/admin/mensajes", label: "Mensajes", icon: Mail },
   { href: "/admin/configuracion", label: "Configuración", icon: Settings },
   { href: "/admin/perfil", label: "Perfil", icon: User },
