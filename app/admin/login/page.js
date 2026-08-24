@@ -5,7 +5,9 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { signIn } from "next-auth/react";
-import { Lock, Mail, AlertCircle } from "lucide-react";
+import Link from "next/link";
+import Image from "next/image";
+import { Lock, Mail, AlertCircle, ArrowLeft } from "lucide-react";
 import { loginSchema } from "@/schemas/auth";
 import { Input, Label, FieldError } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -50,8 +52,37 @@ function LoginForm() {
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-background px-4">
-      <div className="w-full max-w-sm">
+    <div className="flex min-h-screen bg-background">
+      {/* Left Column - Image Background */}
+      <div className="hidden lg:flex lg:w-1/2 relative bg-zinc-900 overflow-hidden">
+        <div className="absolute inset-0 bg-black/40 z-10" />
+        <Image
+          src="/admin-bg.jpg"
+          alt="Viziontech Admin Background"
+          fill
+          priority
+          className="object-cover"
+        />
+        <div className="absolute inset-0 z-20 flex flex-col justify-end p-12 text-white">
+          <h2 className="text-3xl font-bold mb-3 tracking-tight">Viziontech Admin</h2>
+          <p className="text-zinc-300 text-lg max-w-md">
+            Bienvenido al centro de control. Gestiona todos tus proyectos, servicios y configuraciones de forma segura.
+          </p>
+        </div>
+      </div>
+
+      {/* Right Column - Login Form */}
+      <div className="flex flex-1 items-center justify-center px-4 py-12 lg:w-1/2 relative">
+        <div className="w-full max-w-sm">
+          <div className="mb-6 flex justify-start">
+          <Link 
+            href="/" 
+            className="inline-flex items-center text-sm font-medium text-muted-foreground hover:text-foreground transition-colors"
+          >
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Volver al inicio
+          </Link>
+        </div>
         <div className="mb-8 text-center">
           <span className="inline-flex items-center justify-center h-12 w-12 rounded-xl brand-gradient text-white font-bold text-lg mb-4">
             vT
@@ -114,6 +145,7 @@ function LoginForm() {
         <p className="mt-6 text-center text-xs text-muted-foreground">
           © {new Date().getFullYear()} viziontech. Acceso restringido a personal autorizado.
         </p>
+      </div>
       </div>
     </div>
   );
