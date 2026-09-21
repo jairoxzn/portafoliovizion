@@ -3,7 +3,7 @@
 import { useState, useTransition } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Eye, Pencil, Trash2, FileText } from "lucide-react";
+import { Eye, Pencil, Trash2, FileText, FileDown } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { EmptyState } from "@/components/ui/empty-state";
@@ -86,6 +86,27 @@ export function QuotesTable({ quotes }) {
                       >
                         <Eye className="h-4 w-4" />
                       </Link>
+                      {quote.pdfUrl ? (
+                        <a
+                          href={quote.pdfUrl}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          download={`${quote.number}.pdf`}
+                          className="rounded-md p-1.5 text-muted-foreground hover:bg-surface-muted hover:text-foreground"
+                          aria-label="Exportar PDF"
+                          title="Exportar PDF"
+                        >
+                          <FileDown className="h-4 w-4" />
+                        </a>
+                      ) : (
+                        <span
+                          className="rounded-md p-1.5 text-muted-foreground/30"
+                          aria-hidden="true"
+                          title="Sin PDF generado"
+                        >
+                          <FileDown className="h-4 w-4" />
+                        </span>
+                      )}
                       <Link
                         href={`/admin/cotizaciones/${quote.id}/editar`}
                         className="rounded-md p-1.5 text-muted-foreground hover:bg-surface-muted hover:text-foreground"
