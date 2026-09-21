@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
-import { Download, Link2, Pencil } from "lucide-react";
+import { Download, FileDown, Link2, Pencil } from "lucide-react";
 import { generateQuotePdf, setQuoteStatus } from "@/actions/quotes";
 import { Button } from "@/components/ui/button";
 import { Select } from "@/components/ui/input";
@@ -91,6 +91,17 @@ export function QuoteDetailActions({ quote, total }) {
 
         {quote.pdfUrl && (
           <>
+            <Button
+              href={quote.pdfUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              download={`${quote.number}.pdf`}
+              variant="outline"
+              className="w-full"
+            >
+              <FileDown className="h-4 w-4" />
+              Exportar PDF
+            </Button>
             <Button
               type="button"
               variant="outline"

@@ -3,19 +3,10 @@ import Link from "next/link";
 import { ExternalLink, ArrowRight, ImageOff } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { truncate, statusLabel, statusStyle } from "@/lib/utils";
-
-function primaryLink(links) {
-  if (!links?.length) return null;
-  return (
-    links.find((l) => l.type === "SISTEMA") ||
-    links.find((l) => l.type === "DEMO") ||
-    links[0]
-  );
-}
+import { truncate, statusLabel, statusStyle, primaryProjectLink } from "@/lib/utils";
 
 export function ProjectCard({ project }) {
-  const visitLink = primaryLink(project.links);
+  const visitLink = primaryProjectLink(project.links);
   const techs = project.technologies?.map((pt) => pt.technology) || [];
 
   return (

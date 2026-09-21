@@ -13,6 +13,22 @@ export async function listCategories() {
   });
 }
 
+/** Categorías con sus proyectos publicados (para agrupar la landing page por rubro). */
+export async function listPublicCategoriesWithProjects() {
+  const categories = await prisma.category.findMany({
+    orderBy: [{ order: "asc" }, { name: "asc" }],
+    include: {
+      projects: {
+        where: { published: true },
+        orderBy: [{ order: "asc" }, { createdAt: "desc" }],
+        include: { links: true },
+      },
+    },
+  });
+
+  return categories.filter((category) => category.projects.length > 0);
+}
+
 export async function createCategory(input) {
   await requireAdmin();
 

@@ -1,6 +1,7 @@
 import { Hero } from "@/components/public/hero";
 import { ServicesSection } from "@/components/public/services-section";
 import { FeaturedProjectsSection } from "@/components/public/featured-projects-section";
+import { CategoriesSection } from "@/components/public/categories-section";
 import { TechnologiesSection } from "@/components/public/technologies-section";
 import { CtaSection } from "@/components/public/cta-section";
 import { buildMetadata } from "@/lib/seo";
@@ -18,6 +19,7 @@ export default function HomePage() {
       <Hero />
       <ServicesSection />
       <FeaturedProjectsSection />
+      <CategoriesSection />
       <TechnologiesSection />
       <CtaSection />
     </>
